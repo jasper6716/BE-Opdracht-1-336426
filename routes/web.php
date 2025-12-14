@@ -5,6 +5,7 @@ use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\AllergeenController;
 use App\Http\Controllers\MagazijnController;
+use App\Http\Controllers\LeverancierController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -33,6 +34,12 @@ Route::put('Magazijn/{id}', [MagazijnController::class, 'update'])->name('Magazi
 Route::get('/magazijn/{id}/AllergenenInfo', [MagazijnController::class, 'AllergenenInfo'])->name('magazijn.AllergenenInfo');
 
 Route::get('/magazijn/{id}/LeverantieInfo', [MagazijnController::class, 'LeverantieInfo'])->name('magazijn.LeverantieInfo');
+
+Route::get('/Leverancier', [LeverancierController::class, 'index'])->name('Leverancier.index');
+
+Route::get('Leverancier/{id}/LeveringInfo', [LeverancierController::class, 'LeveringInfo'])->name('Leverancier.LeveringInfo');
+
+Route::get('Leverancier/create', [LeverancierController::class, 'create'])->name('Leverancier.create');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

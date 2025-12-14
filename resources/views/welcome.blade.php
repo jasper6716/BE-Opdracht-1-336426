@@ -26,6 +26,7 @@
                 <nav class="flex items-center justify-end gap-4">
                     <a href="{{ route('Allergenen.index')}}">allergeen</a>
                     <a href="{{ route('Magazijn.index')}}">magazijn</a>
+                    <a href="{{ route('Leverancier.index')}}" class="dark:text-[#EDEDEC]">leverancier</a>
                     @auth
                         <a
                             href="{{ url('/dashboard') }}"
