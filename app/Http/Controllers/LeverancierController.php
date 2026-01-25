@@ -63,19 +63,35 @@ class LeverancierController extends Controller
             'omschrijving' => 'required|string|max:255'
         ]);
 
-        $newId = $this->allergeenModel->SP_CreateAllergeen(
+        $newId = $this->leverancierModel->SP_CreateLevering(
             $data['naam'],
             $data['omschrijving']
         );
 
-        return redirect()->route('Allergenen.index')
-                         ->with('success', 'Allergeen is succesvol toegevoegd met id' . $newId);
+        return redirect()->route('Leverancier.index')
+                         ->with('success', 'Levering is succesvol toegevoegd' . $newId);
+    }
+
+    public function LeverancierInfo($id)
+    {
+        $leverancier = $this->leverancierModel->SP_LeverancierDetails($id);
+
+        if (!$leverancier)
+        {
+            return redirect()->route('Leverancier.index')
+                             ->with('error', 'Leverancier is niet gevonden');  
+        }
+
+        return view('Leverancier.LeverancierInfo', [
+            'title' => 'Leverancier details',
+            'leverancier' => $leverancier
+        ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(LeverancierModel $leverancierModel)
+    public function show($id)
     {
         //
     }
@@ -83,9 +99,14 @@ class LeverancierController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(LeverancierModel $leverancierModel)
+    public function edit($id)
     {
-        //
+        $leverancier = $this->leverancierModel->SP_LeverancierDetails($id);
+        abort_if(!$leverancier, 404);
+        return view('Leverancier.edit', [
+            'title' => 'Leverancier wijzigen',
+            'leverancier' => $leverancier,
+        ]);
     }
 
     /**

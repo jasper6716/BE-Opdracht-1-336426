@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
-    <title>Magazijn pagina</title>
+    <title>Leverancier pagina</title>
 </head>
 <body>
     <div class="container">
@@ -28,6 +28,7 @@
                 <th>Mobiel</th>
                 <th>Aantal verschillende producten</th>
                 <th>Toon producten</th>
+                <th>Leverancier Details</th>
             </thead>
             <tbody>
                 
@@ -43,6 +44,13 @@
                             @csrf
                             @method('GET')
                             <button type="submit" class="btn btn-sm"><i class="bi bi-box"></i></button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{{ route('Leverancier.LeverancierInfo', $leverancierInfo->Id) }}" method="POST">
+                            @csrf
+                            @method('GET')
+                            <button type="submit" class="btn btn-sm"><i class="bi bi-pencil-square"></i></button>
                         </form>
                     </td>
                 </tr>
