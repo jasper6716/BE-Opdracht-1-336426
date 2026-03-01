@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
     <title>Allergenen pagina</title>
 </head>
 <body>
@@ -17,10 +18,7 @@
                 <button type="button" class="btn-close" aria-label="sluiten" data-bs-dismiss="alert"></button>
             </div>
             <meta http-equiv="refresh" content="3;url={{ route('Allergenen.index') }}">
-            @endif
-    
-        <a href="{{ route('Allergenen.create') }}" class="btn btn-primary mt-2">Nieuwe allergeen</a>
-        
+            @endif        
         
         <div class="mt-3">
             <form action="{{ route('Allergenen.categorie') }}" method="POST">
@@ -31,8 +29,8 @@
                     <option value="">
                         Selecteer allergeen
                     </option>
-                    @foreach ($allergenen as $allergeen)
-                        <option value="{{ $allergeen->Naam }}">{{ $allergeen->Naam }}</option>
+                    @foreach ($namen as $naam)
+                        <option value="{{ $naam->Naam }}">{{ $naam->Naam }}</option>
                     @endforeach
                 </select>
                 <button type="submit" class="btn btn-secondary btn-sm">Maak selectie</button>
@@ -42,44 +40,31 @@
 
         <table class="table">
             <thead>
-                <th>Naam</th>
+                <th>Naam product</th>
+                <th>Naam Allergeen</th>
                 <th>Omschrijving</th>
-                <th>Verwijderen</th>
-                <th>Wijzigen</th>
-                <th>Details</th>
+                <th>Aantal aanwezig</th>
+                <th>Info</th>
             </thead>
             <tbody>
                 
                 @forelse ($allergenen as $allergeen)
                 <tr>
-                    <td>{{ $allergeen->Naam }}</td>
+                    <td>{{ $allergeen->ProductNaam }}</td>
+                    <td>{{ $allergeen->AllergeenNaam }}</td>
                     <td>{{ $allergeen->Omschrijving }}</td>
-                    <td>
-                        <form action="{{ route('Allergenen.destroy', $allergeen->Id) }}" method="POST" 
-                        onsubmit="return confirm('weet u zeker dat u dit allergeen wilt verwijderen?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">Verwijderen</button>
-                        </form>
-                    </td>
-                    <td>
-                        <form action="{{ route('Allergenen.edit', $allergeen->Id) }}" method="POST">
-                            @csrf
-                            @method('GET')
-                            <button type="submit" class="btn btn-success btn-sm">Wijzig</button>
-                        </form>
-                    </td>
+                    <td>{{ $allergeen->AantalAanwezig }}</td>
                      <td>
-                        <form action="{{ route('Allergenen.show', $allergeen->Id) }}" method="POST">
+                        <form action="{{ route('Leverancier.LeverancierGegevens', $allergeen->Id) }}" method="POST">
                             @csrf
                             @method('GET')
-                            <button type="submit" class="btn btn-warning btn-sm">Details</button>
+                            <button type="submit" class="btn btn-warning btn-sm"><i class="bi bi-patch-question"></i></button>
                         </form>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="3">Geen Allergenen gevonden</td>
+                    <td colspan="3">Geen producten met dit allergeen gevonden</td>
                 </tr>
                 @endforelse
             </tbody>

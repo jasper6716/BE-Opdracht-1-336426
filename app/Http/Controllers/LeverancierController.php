@@ -88,6 +88,22 @@ class LeverancierController extends Controller
         ]);
     }
 
+    public function LeverancierGegevens($id)
+    {
+        $leverancier = $this->leverancierModel->SP_GetLeverancierGegevens($id);
+
+        if (!$leverancier)
+        {
+            return redirect()->route('Leverancier.index')
+                             ->with('error', 'Leverancier is niet gevonden');  
+        }
+
+        return view('Leverancier.LeverancierGegevens', [
+            'title' => 'Overzicht leverancier gegevens',
+            'leverancier' => $leverancier
+        ]);
+    }
+
     /**
      * Display the specified resource.
      */
@@ -112,9 +128,39 @@ class LeverancierController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, LeverancierModel $leverancierModel)
+    public function update(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+            'Naam' => ['required', 'string', 'max:30'],
+            'ContactPersoon' => ['required', 'string', 'max:50'],
+            'LeverancierNummer' => ['required', 'string', 'max:11'],
+            'Mobiel' => ['required', 'string', 'max:11'],
+            'Straat' => ['required', 'string', 'max:50'],
+            'Huisnummer' => ['required', 'integer', 'between:0,65535'],
+            'Postcode' => ['required', 'string', 'max:6'],
+            'Stad' => ['required', 'string', 'max:30'],
+        ]);
+
+        $affected = $this->leverancierModel->SP_UpdateLeverancier(
+            $id,
+            $validated['Naam'],
+            $validated['ContactPersoon'],
+            $validated['LeverancierNummer'],
+            $validated['Mobiel'],
+            $validated['Straat'],
+            $validated['Huisnummer'],
+            $validated['Postcode'],
+            $validated['Stad'],
+        );
+
+        if ($affected === 0)
+        {
+            return back()->with('error', 'er is niets gewijzigd of het item bestaat niet.');
+        }
+
+        return redirect()
+            ->route('Leverancier.index')
+            ->with('success', 'Leverancier succesvol gewijzigd');
     }
 
     /**

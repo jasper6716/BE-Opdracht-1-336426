@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class AllergeenModel extends Model
 {
-    //we kunnen lezen Yippee
+   
     public function SP_GetAllAllergenen()
     {
         // var_dump(DB::select('CALL SP_GetAllAllergenen'));
@@ -56,5 +56,16 @@ class AllergeenModel extends Model
         );
 
         return $row->affected ?? 0;
+    }
+
+    public function SP_SorteerAllergenen($naam)
+    {
+        $allergenen = DB::select(
+            'CALL SP_SorteerAllergenen(:naam)',
+            ['naam' => $naam]
+        );
+        $namen = DB::select('CALL SP_GetAllAllergenen');
+        return ['allergenen' => $allergenen, 
+        'namen' => $namen];
     }
 }

@@ -45,8 +45,6 @@ class AllergeenController extends Controller
      */
     public function store(Request $request)
     {
-       // dd($request->all());
-
         $data = $request->validate([
             'naam' => 'required|string|max:50',
             'omschrijving' => 'required|string|max:255'
@@ -64,19 +62,31 @@ class AllergeenController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(AllergeenModel $allergeenModel)
+    public function show($id)
     {
-        //
+
+        $allergeen = $this->allergeenModel->SP_GetAllergeenById($id);
+
+        if (!$allergeen)
+        {
+            return redirect()->route('Allergenen.index')
+                             ->with('error', 'Allergeen is niet gevonden');  
+        }
+
+        return view('Allergenen.show', [
+            'title' => 'Details Allergeen',
+            'allergeen' => $allergeen
+        ]);
+        // dd(all)
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified resource. 
      */
     public function edit($id)
     {
         $allergenen = $this->allergeenModel->SP_GetAllergeenById($id);
         abort_if(!$allergenen, 404);
-        // dd($allergenen);
         return view('Allergenen.edit', [
             'title' => 'Allergeen wijzigen',
             'allergenen' => $allergenen,
@@ -84,7 +94,7 @@ class AllergeenController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update resource in storage.Nu!
      */
     public function update(Request $request, $id)
     {
@@ -110,7 +120,7 @@ class AllergeenController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the source :).
      */
     public function destroy($id)
     {
@@ -125,5 +135,16 @@ class AllergeenController extends Controller
 
         return redirect()->route('Allergenen.index')
                          ->with('error', 'Allergeen is niet goed verwijderd.');
+    }
+
+    public function categorie(Request $request)
+    {
+        $data = $this->allergeenModel->SP_SorteerAllergenen($request->input('Allergeen'));
+        
+        return view('Allergenen.categorie', [
+            'title' => 'Allergeen',
+            'allergenen' => $data['allergenen'],
+            'namen' => $data['namen']
+        ]);
     }
 }

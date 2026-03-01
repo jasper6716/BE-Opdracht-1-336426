@@ -13,6 +13,8 @@ Route::get('/', function () {
 
 Route::get('/Allergenen', [AllergeenController::class, 'index'])->name('Allergenen.index');
 
+Route::get('Allergenen/categorie', [AllergeenController::class, 'categorie'])->name('Allergenen.categorie');
+
 Route::get('/Allergenen/create', [AllergeenController::class, 'create'])->name('Allergenen.create');
 
 Route::post('Allergenen', [AllergeenController::class, 'store'])->name('Allergenen.store');
@@ -23,17 +25,13 @@ Route::get('Allergenen/{id}/edit', [AllergeenController::class, 'edit'])->name('
 
 Route::put('Allergenen/{id}', [AllergeenController::class, 'update'])->name('Allergenen.update');
 
+Route::get('Allergenen/{id}', [AllergeenController::class, 'show'])->name('Allergenen.show');
+
 Route::get('/Magazijn', [MagazijnController::class, 'index'])->name('Magazijn.index');
 
-Route::post('Magazijn', [MagazijnController::class, 'store'])->name('Magazijn.store');
+Route::get('Magazijn/{id}/AllergeenInfo', [MagazijnController::class, 'AllergeenInfo'])->name('Magazijn.AllergeenInfo');
 
-Route::delete('Magazijn/{id}', [MagazijnController::class, 'destroy'])->name('Magazijn.destroy');
-
-Route::put('Magazijn/{id}', [MagazijnController::class, 'update'])->name('Magazijn.update');
-
-Route::get('/magazijn/{id}/AllergenenInfo', [MagazijnController::class, 'AllergenenInfo'])->name('magazijn.AllergenenInfo');
-
-Route::get('/magazijn/{id}/LeverantieInfo', [MagazijnController::class, 'LeverantieInfo'])->name('magazijn.LeverantieInfo');
+Route::get('Magazijn/{id}/LeverantieInfo', [MagazijnController::class, 'LeverantieInfo'])->name('Magazijn.LeverantieInfo');
 
 Route::get('/Leverancier', [LeverancierController::class, 'index'])->name('Leverancier.index');
 
@@ -43,7 +41,9 @@ Route::get('Leverancier/create', [LeverancierController::class, 'create'])->name
 
 Route::get('Leverancier/{id}/edit', [LeverancierController::class, 'edit'])->name('Leverancier.edit');
 
-Route::get('Leverancier/{id}', [LeverancierController::class, 'LeverancierInfo'])->name('Leverancier.LeverancierInfo');
+Route::get('Leverancier/{id}/info', [LeverancierController::class, 'LeverancierInfo'])->name('Leverancier.LeverancierInfo');
+
+Route::get('Leverancier/{id}/gegevens', [LeverancierController::class, 'LeverancierGegevens'])->name('Leverancier.LeverancierGegevens');
 
 Route::put('Leverancier/{id}', [LeverancierController::class, 'update'])->name('Leverancier.update');
 
@@ -54,9 +54,9 @@ Route::view('dashboard', 'dashboard')
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
-    Volt::route('settings/profile', 'settings.profile')->name('profile.edit');
-    Volt::route('settings/password', 'settings.password')->name('password.edit');
-    Volt::route('settings/appearance', 'settings.appearance')->name('appearance.edit');
+    Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
+    Volt::route('settings/password', 'settings.password')->name('settings.password');
+    Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 
     Volt::route('settings/two-factor', 'settings.two-factor')
         ->middleware(
