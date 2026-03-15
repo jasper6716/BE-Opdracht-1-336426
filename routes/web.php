@@ -6,6 +6,7 @@ use Livewire\Volt\Volt;
 use App\Http\Controllers\AllergeenController;
 use App\Http\Controllers\MagazijnController;
 use App\Http\Controllers\LeverancierController;
+use App\Http\Controllers\LeveringController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -46,6 +47,10 @@ Route::get('Leverancier/{id}/info', [LeverancierController::class, 'LeverancierI
 Route::get('Leverancier/{id}/gegevens', [LeverancierController::class, 'LeverancierGegevens'])->name('Leverancier.LeverancierGegevens');
 
 Route::put('Leverancier/{id}', [LeverancierController::class, 'update'])->name('Leverancier.update');
+
+Route::get('/Levering', [LeveringController::class, 'index'])->name('Levering.index');
+
+Route::get('Levering/{product}', [LeveringController::class, 'show'])->name('Levering.show');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

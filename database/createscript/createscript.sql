@@ -1,24 +1,11 @@
 
--- Gebruik database jamin
-USE `jamin-a1`;
+USE `jamin`;
 
--- Step: 02
--- ***************************************************************
--- Doel : Maak een nieuwe tabel aan met de naam Allergeen
--- ***************************************************************
--- Versie       Datum           Auteur              Omschrijving
--- ******       *****           ******              ************
--- 01           12-02-2025      Arjan de Ruijter    Tabel Allergeen
--- ***************************************************************
--- Onderstaande velden toevoegen aan de tabel Allergeen
--- Merk, Model, Prijs, Geheugen, Besturingssysteem, 
--- Schermgrootte, Releasedatum, MegaPixels
--- ***************************************************************
 DROP TABLE IF EXISTS Allergeen;
 
 CREATE TABLE IF NOT EXISTS Allergeen
 (
-     Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+     Id                 INT             UNSIGNED    NOT NULL        AUTO_INCREMENT
     ,Naam               VARCHAR(30)                 NOT NULL
     ,Omschrijving       VARCHAR(100)                NOT NULL     
     ,IsActief           BIT                         NOT NULL        DEFAULT 1
@@ -41,22 +28,55 @@ VALUES
 ,('Soja', 'Dit product bevat soja.');
 
 
+DROP TABLE IF EXISTS Contact;
+
+CREATE TABLE IF NOT EXISTS Contact
+(
+     Id                 INT             UNSIGNED    NOT NULL        AUTO_INCREMENT
+    ,Straat             VARCHAR(50)                 NOT NULL
+    ,Huisnummer         SMALLINT        UNSIGNED    NOT NULL     
+    ,Postcode           VARCHAR(6)                  NOT NULL
+    ,Stad               VARCHAR(30)                 NOT NULL     
+    ,IsActief           BIT                         NOT NULL        DEFAULT 1
+    ,Opmerking          VARCHAR(255)                    NULL        DEFAULT NULL
+    ,DatumAangemaakt    DATETIME(6)                 NOT NULL        DEFAULT (SYSDATE(6))
+    ,DatumGewijzigd     DATETIME(6)                 NOT NULL        DEFAULT (SYSDATE(6))
+    ,CONSTRAINT         PK_Allergeen_Id             PRIMARY KEY     CLUSTERED(Id)
+) ENGINE=InnoDB;
+
+INSERT INTO Contact
+(
+      Straat
+     ,Huisnummer
+     ,Postcode
+     ,Stad
+)
+VALUES
+ ('Van Gilslaan', 34, '1045CB', 'Hilvarenbeek')
+,('Den Dolderpad', 2, '1067RC', 'Utrecht')
+,('Fredo Raalteweg', 257, '1236OP', 'Nijmegen')
+,('Bertrand Russellhof', 21, '2034AP', 'Den Haag')
+,('Leon van Bonstraat', 213, '145XC', 'Lunteren')
+,('Bea van Lingenlaan', 234, '2197FG', 'Sint Pancras');
 
 DROP TABLE IF EXISTS Leverancier;
 
 CREATE TABLE IF NOT EXISTS Leverancier
 (
-     Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+     Id                 INT             UNSIGNED    NOT NULL        AUTO_INCREMENT
     ,Naam               VARCHAR(30)                 NOT NULL
     ,ContactPersoon     VARCHAR(50)                 NOT NULL
     ,LeverancierNummer  VARCHAR(11)                 NOT NULL
     ,Mobiel             VARCHAR(11)                 NOT NULL
+    ,ContactId          INT             UNSIGNED        NULL
     ,IsActief           BIT                         NOT NULL        DEFAULT 1
     ,Opmerking          VARCHAR(255)                    NULL        DEFAULT NULL
     ,DatumAangemaakt    DATETIME(6)                 NOT NULL        DEFAULT (SYSDATE(6))
     ,DatumGewijzigd     DATETIME(6)                 NOT NULL        DEFAULT (SYSDATE(6))
     ,CONSTRAINT         PK_Leverancier_Id             PRIMARY KEY     CLUSTERED(Id)
+    ,FOREIGN KEY(ContactId)         REFERENCES Contact(Id)
 ) ENGINE=InnoDB;
+
 
 INSERT INTO Leverancier
 (
@@ -64,20 +84,23 @@ INSERT INTO Leverancier
      ,ContactPersoon
      ,LeverancierNummer
      ,Mobiel
+     ,ContactId
 
 )
 VALUES
- ('Venco', 'Bert van Linge', 'L1029384719', '06-28493827')
-,('Astra Sweets', 'Jasper del Monte', 'L1029284315', '06-39398734')
-,('Haribo', 'Sven Stalman', 'L1029324748', '06-24383291')
-,('Basset', 'Joyce Stelterberg', 'L1023845773', '06-48293823')
-,('De Bron', 'Remco Veenstra', 'L1023857736', '06-34291234');
+ ('Venco', 'Bert van Linge', 'L1029384719', '06-28493827', 1)
+,('Astra Sweets', 'Jasper del Monte', 'L1029284315', '06-39398734', 2)
+,('Haribo', 'Sven Stalman', 'L1029324748', '06-24383291', 3)
+,('Basset', 'Joyce Stelterberg', 'L1023845773', '06-48293823', 4)
+,('De Bron', 'Remco Veenstra', 'L1023857736', '06-34291234', 5)
+,('Quality Street', 'Johan Nooij', 'L1029234586', '06-23458456', 6)
+,('Hom Ken Food', 'Hom Ken', 'L1029234599', '06-23458477', NULL);
 
 DROP TABLE IF EXISTS Product;
 
 CREATE TABLE IF NOT EXISTS Product
 (
-     Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+     Id                 INT             UNSIGNED    NOT NULL        AUTO_INCREMENT
     ,Naam               VARCHAR(30)                 NOT NULL
     ,Barcode            CHAR(13)                    NOT NULL     
     ,IsActief           BIT                         NOT NULL        DEFAULT 1
@@ -105,14 +128,15 @@ VALUES
 ,('Winegums', 8719587327527)
 ,('Drop Munten', 8719587322345)
 ,('Kruis Drop', 8719587322265)
-,('Zuite Ruitjes', 8719587323256);
+,('Zoute Ruitjes', 8719587323256)
+,('Drop ninja’s', 8719587323277);
 
 DROP TABLE IF EXISTS Magazijn;
 
 CREATE TABLE IF NOT EXISTS Magazijn
 (
-     Id                                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
-    ,ProductId                          SMALLINT        UNSIGNED    NOT NULL 
+     Id                                 INT             UNSIGNED    NOT NULL        AUTO_INCREMENT
+    ,ProductId                          INT             UNSIGNED    NOT NULL 
     ,VerpakkingsEenheidInKilogram       DECIMAL(3,1)    UNSIGNED    NOT NULL
     ,AantalAanwezig                     SMALLINT        UNSIGNED        NULL
     ,IsActief                           BIT                         NOT NULL        DEFAULT 1
@@ -148,9 +172,9 @@ DROP TABLE IF EXISTS ProductPerAllergeen;
 
 CREATE TABLE IF NOT EXISTS ProductPerAllergeen
 (
-     Id                                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
-    ,ProductId                          SMALLINT        UNSIGNED    NOT NULL 
-    ,AllergeenId                        SMALLINT        UNSIGNED    NOT NULL
+     Id                                 INT             UNSIGNED    NOT NULL        AUTO_INCREMENT
+    ,ProductId                          INT             UNSIGNED    NOT NULL 
+    ,AllergeenId                        INT             UNSIGNED    NOT NULL
     ,IsActief                           BIT                         NOT NULL        DEFAULT 1
     ,Opmerking                          VARCHAR(255)                    NULL        DEFAULT NULL
     ,DatumAangemaakt                    DATETIME(6)                 NOT NULL        DEFAULT (SYSDATE(6))
@@ -177,18 +201,19 @@ VALUES
 ,(12, 4)
 ,(13, 1)
 ,(13, 4)
-,(13, 5);
+,(13, 5)
+,(14, 5);
 
 DROP TABLE IF EXISTS ProductPerLeverancier;
 
 CREATE TABLE IF NOT EXISTS ProductPerLeverancier
 (
-     Id                                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
-    ,LeverancierId                      SMALLINT        UNSIGNED    NOT NULL 
-    ,ProductId                          SMALLINT        UNSIGNED    NOT NULL
-    ,DatumLevering                      DATETIME                    NOT NULL
+     Id                                 INT             UNSIGNED    NOT NULL        AUTO_INCREMENT
+    ,LeverancierId                      INT             UNSIGNED    NOT NULL 
+    ,ProductId                          INT             UNSIGNED    NOT NULL
+    ,DatumLevering                      DATE                            NULL
     ,Aantal                             TINYINT         UNSIGNED    NOT NULL
-    ,DatumEerstVolgendeLevering         DATETIME                        NULL
+    ,DatumEerstVolgendeLevering         DATE                            NULL
     ,IsActief                           BIT                         NOT NULL        DEFAULT 1
     ,Opmerking                          VARCHAR(255)                    NULL        DEFAULT NULL
     ,DatumAangemaakt                    DATETIME(6)                 NOT NULL        DEFAULT (SYSDATE(6))
@@ -197,7 +222,7 @@ CREATE TABLE IF NOT EXISTS ProductPerLeverancier
     ,FOREIGN KEY(LeverancierId)         REFERENCES Leverancier(Id)
     ,FOREIGN KEY(ProductId)             REFERENCES Product(Id)
 ) ENGINE=InnoDB;
--- verander dit nog en dan is het klaar
+
 INSERT INTO ProductPerLeverancier
 (
       LeverancierId
@@ -207,20 +232,21 @@ INSERT INTO ProductPerLeverancier
      ,DatumEerstVolgendeLevering
 )
 VALUES
- (1, 1, "2024-10-09", 23, "2024-10-16")
-,(1, 1, "2024-10-18", 21, "2024-10-25")
-,(1, 2, "2024-10-09", 12, "2024-10-16")
-,(1, 3, "2024-10-10", 11, "2024-10-17")
-,(2, 4, "2024-10-14", 16, "2024-10-21")
-,(2, 4, "2024-10-21", 23, "2024-10-28")
-,(2, 5, "2024-10-14", 45, "2024-10-21")
-,(2, 6, "2024-10-14", 30, "2024-10-21")
-,(3, 7, "2024-10-12", 12, "2024-10-19")
-,(3, 7, "2024-10-19", 23, "2024-10-26")
-,(3, 8, "2024-10-10", 12, "2024-10-17")
-,(3, 9, "2024-10-11", 1, "2024-10-18")
-,(4, 10, "2024-10-16", 24, "2024-10-30")
-,(5, 11, "2024-10-10", 47, "2024-10-17")
-,(5, 11, "2024-10-19", 60, "2024-10-26")
-,(5, 12, "2024-10-11", 45, NULL)
-,(5, 13, "2024-10-12", 23, NULL);
+ (1, 1, "2023-04-09", 23, "2023-04-16")
+,(1, 1, "2023-04-18", 21, "2023-04-25")
+,(1, 2, "2023-04-09", 12, "2023-04-16")
+,(1, 3, "2023-04-10", 11, "2023-04-17")
+,(2, 4, "2023-04-14", 16, "2023-04-21")
+,(2, 4, "2023-04-21", 23, "2023-04-28")
+,(2, 5, "2023-04-14", 45, "2023-04-21")
+,(2, 6, "2023-04-14", 30, "2023-04-21")
+,(3, 7, "2023-04-12", 12, "2023-04-19")
+,(3, 7, "2023-04-19", 23, "2023-04-26")
+,(3, 8, "2023-04-10", 12, "2023-04-17")
+,(3, 9, "2023-04-11", 1, "2023-04-18")
+,(4, 10, "2023-04-16", 24, "2023-04-30")
+,(5, 11, "2023-04-10", 47, "2023-04-17")
+,(5, 11, "2023-04-19", 60, "2023-04-26")
+,(5, 12, "2023-04-11", 45, NULL)
+,(5, 13, "2023-04-12", 23, NULL)
+,(7, 14, "2023-04-14", 20, NULL);
